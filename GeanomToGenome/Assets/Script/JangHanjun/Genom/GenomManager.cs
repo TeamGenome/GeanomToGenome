@@ -47,13 +47,14 @@ public class GenomManager : MonoBehaviour
         }
     }
 
-    public void Selection()
+    public void Selection(List<List<bool>> inputFour)
     {
-
+        dominantGenoms = inputFour;
     }
 
     private void Crossover()
-    {       
+    {   
+        // 상위 4개의 객체는 살려 둡니다.
         for(int i = 0; i < 4; i++)
         {
             subjects[i].ReplaceGenom(dominantGenoms[i]);
