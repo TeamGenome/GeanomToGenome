@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Genom : MonoBehaviour
 {
-    public List<bool> GenomList = new List<bool>();
+    private List<bool> GenomList = new List<bool>();
 
     public void InitGenom(int genomLength)
     {

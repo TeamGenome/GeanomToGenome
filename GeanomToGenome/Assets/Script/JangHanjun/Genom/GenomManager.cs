@@ -19,19 +19,22 @@ using UnityEngine;
 */
 public class GenomManager : MonoBehaviour
 {
-    public GameObject GenomPrefab;
-    public int genomLength;
-    public float distanceBetweenObjects;
-    List<Genom> subjects = new List<Genom>();
-    List<List<bool>> dominantGenoms = new List<List<bool>>();
+    [SerializeField] private GameObject GenomPrefab;
+    [SerializeField] private int genomLength;
+    [SerializeField] private float distanceBetweenObjects;
+    private List<Genom> subjects = new List<Genom>();
+    private List<List<bool>> dominantGenoms = new List<List<bool>>();
 
     void Start()
     {
+        Debug.Log("Scene 시작");
         MakeGenoms();
     }
 
     private void MakeGenoms()
     {
+        Debug.Log("첫 64개의 랜덤 유전자 생성");
+
         Vector3 position = new Vector3(0, 0, 0);
 
         for(int xPos = 0; xPos < 8; xPos++)
@@ -49,11 +52,18 @@ public class GenomManager : MonoBehaviour
 
     public void Selection(List<List<bool>> inputFour)
     {
+        Debug.Log("우성 유전자 4개 선정");
+
         dominantGenoms = inputFour;
+
+        Debug.Log("교배를 시작합니다");
+        Crossover();
     }
 
     private void Crossover()
     {   
+        Debug.Log("다음 세대의 64개 유전자 생성");
+
         // 상위 4개의 객체는 살려 둡니다.
         for(int i = 0; i < 4; i++)
         {
