@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class Car_Moving : MonoBehaviour
 {
-    public List<bool> genomList = new List<bool>();
+    private Genom genom;
+    // public List<bool> genomList = new List<bool>();
     public Rigidbody carRB;
 
     public float moveSpeed;
@@ -13,16 +14,19 @@ public class Car_Moving : MonoBehaviour
     private void Awake()
     {
         carRB = this.GetComponent<Rigidbody>();
+        genom = this.GetComponent<Genom>();
     }
 
     private void Start()
     {
-        for(int i = 0; i < genomList.Count; i++)
-        {
-            genomList[i] = (Random.value > 0.5f);
-        }
+        //? Genom í´ë˜ìŠ¤ í¬í•¨ì„ í†µí•´ êµ¬ì„±
+        // for(int i = 0; i < genomList.Count; i++)
+        // {
+        //     genomList[i] = (Random.value > 0.5f);
+        // }
+        genom.InitGenom(8);
     }
-    // Update is called once per frame
+    
     void Update()
     {
         if (!isMoving)
@@ -39,7 +43,7 @@ public class Car_Moving : MonoBehaviour
 
     public IEnumerator MoveCoroutine()
     {
-        foreach(var genom in genomList)
+        foreach(var genom in genom.GenomList)
         {
             if (genom)
             {
@@ -53,7 +57,7 @@ public class Car_Moving : MonoBehaviour
                     carRB.transform.Rotate(0, 1, 0);
                     yield return new WaitForSeconds(0.005f);
                 }
-                carRB.transform.rotation = Quaternion.Euler(0, Mathf.Round(carRB.transform.rotation.eulerAngles.y), 0); // ¹İ¿Ã¸²À¸·Î Á¤È®È÷ 90µµ °¢µµ·Î º¯°æ
+                carRB.transform.rotation = Quaternion.Euler(0, Mathf.Round(carRB.transform.rotation.eulerAngles.y), 0); // ï¿½İ¿Ã¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È®ï¿½ï¿½ 90ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 yield return new WaitForSeconds(0.01f);
             }
         }
