@@ -20,6 +20,7 @@ using UnityEngine;
 public class GenomManager : MonoBehaviour
 {
     [SerializeField] private GameObject GenomPrefab;
+    [SerializeField] private GameObject TrackTest;
     [SerializeField] private int genomLength;
     [SerializeField] private float distanceBetweenObjects;
     private List<Genom> subjects = new List<Genom>();
@@ -42,6 +43,7 @@ public class GenomManager : MonoBehaviour
             position.x = xPos * distanceBetweenObjects;
             for(int zPos = 0; zPos < 8; zPos++)
             {
+                Instantiate(TrackTest, position, Quaternion.identity);
                 subjects.Add(Instantiate(GenomPrefab, position, Quaternion.identity).GetComponent<Genom>());
                 subjects[subjects.Count - 1].InitGenom(genomLength);
                 position.z += distanceBetweenObjects;
