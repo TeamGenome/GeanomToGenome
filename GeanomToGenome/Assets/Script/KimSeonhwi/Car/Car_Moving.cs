@@ -37,22 +37,24 @@ public class Car_Moving : MonoBehaviour
 
     public void Moving()
     {
+        if(TempStatic.instance.nowGwnerating)   return;
+
         isMoving = true;
         StartCoroutine(MoveCoroutine());
     }
 
     public IEnumerator MoveCoroutine()
     {
-        foreach(var genom in genom.GenomList)
+        for(int i = 0; i < genom.GenomList.Count; i++)
         {
-            if (genom)
+            if (genom.GenomList[i])
             {
                 carRB.AddRelativeForce(Vector3.forward * moveSpeed);
                 yield return new WaitForSeconds(0.5f);
             }
             else
             {
-                for(int i = 1; i <= 90; i++)
+                for(int j = 1; j <= 90; j++)
                 {
                     carRB.transform.Rotate(0, 1, 0);
                     yield return new WaitForSeconds(0.005f);
