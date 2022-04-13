@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 /*
 유전 알고리즘에서 각 연산들을 진행해 주는 클래스입니다.
 
@@ -19,19 +19,21 @@ using UnityEngine;
 */
 public class GenomManager : MonoBehaviour
 {
+    public event Action<bool> crossoverEvent;
     [SerializeField] private GameObject GenomPrefab;
     [SerializeField] private GameObject TrackTest;
     [SerializeField] private int genomLength;
     [SerializeField] private float distanceBetweenObjects;
+    public int generation;
     [SerializeField] private List<Genom> subjects = new List<Genom>();
     private List<List<bool>> dominantGenoms = new List<List<bool>>(4);
-    private List<bool> newGeneration = new List<bool>();
+    [SerializeField] private List<bool> newGeneration = new List<bool>();
 
     void Start()
     {
-        newGeneration.Capacity = genomLength;
-        
         MakeGenoms();
+        
+        crossoverEvent?.Invoke(true);
     }
 
     private void MakeGenoms()
@@ -54,6 +56,7 @@ public class GenomManager : MonoBehaviour
                 subjects[subjects.Count - 1].ReachToEndEvent += Selection;
                 subjects[subjects.Count - 1].name = "car" + (subjects.Count);
 
+
                 // edit instantiate position
                 position.z += distanceBetweenObjects;
             }
@@ -63,66 +66,64 @@ public class GenomManager : MonoBehaviour
 
     public void Selection(List<bool> inputFour)
     {
-        if(TempStatic.instance.nowGwnerating)       return;
-
         dominantGenoms.Add(inputFour);
 
         if(dominantGenoms.Count == 4)
         {
-            for(int i = 0; i < genomLength; i++){
-                Debug.Log(dominantGenoms[0][i]);
-            }
             Crossover();
         }
     }
 
     private void Crossover()
     {   
+        crossoverEvent?.Invoke(false);
         Debug.Log("다음 세대의 64개 유전자 생성");
         TempStatic.instance.nowGwnerating = true;
 
-        // 상위 4개의 객체는 살려 둡니다.
+        // deliver dominant 4 Genoms to next Generation
         for(int i = 0; i < 4; i++)
         {
             subjects[i].ReplaceGenom(dominantGenoms[i]);
         }
 
 
-        // 4개로 60개의 유전자를 바꿔야 합니다.
+        // make other genoms by crossover(+mutation)
         for(int i = 4; i < 64; i++)
         {
-            Debug.Log("replace : " + subjects[i].name);
-            //! TODO : Here have Error
-            // GenerateNewGenom();
+            GenerateNewGenom();
             subjects[i].ReplaceGenom(newGeneration);
         }
 
         // clear dominant list
         dominantGenoms.Clear();
-        TempStatic.instance.nowGwnerating = false;
+        Debug.Log("교배 끝");
+        // crossoverEvent?.Invoke(true);
+        generation++;
     }
 
-    private List<bool> GenerateNewGenom()
+    private void GenerateNewGenom()
     {
+        newGeneration.Clear();
         // select parent
-        int father = Random.Range(0, 4);
-        int mother = Random.Range(0, 4);
+        int father = UnityEngine.Random.Range(0, 4);
+        int mother = UnityEngine.Random.Range(0, 4);
+
+
         for(int i = 0; i < genomLength; i++)
         {
             // random genom
-            if(Random.value > 0.5f)
+            if(UnityEngine.Random.value > 0.5f)
             {
-                newGeneration[i] = dominantGenoms[father][i];
-                continue;
+                newGeneration.Add(dominantGenoms[father][i]);
             }
             else
             {
-                newGeneration[i] = dominantGenoms[mother][i];
-                continue;
+                newGeneration.Add(dominantGenoms[mother][i]);
             }
+            // mutation
+            if(UnityEngine.Random.value < 0.1f)
+                newGeneration[i] = !newGeneration[i];
         }
-
-        Debug.Log(newGeneration.Count);
-        return newGeneration;
     }
+
 }

@@ -7,28 +7,28 @@ public class Car_Moving : MonoBehaviour
     private Genom genom;
     // public List<bool> genomList = new List<bool>();
     public Rigidbody carRB;
-
     public float moveSpeed;
     public bool isMoving;
+    [SerializeField] private bool canMove;
+    [SerializeField] private Vector3 originPos;
 
     private void Awake()
     {
         carRB = this.GetComponent<Rigidbody>();
         genom = this.GetComponent<Genom>();
+        
+        FindObjectOfType<GenomManager>().crossoverEvent += SetMovingState;
     }
 
     private void Start()
     {
-        //? Genom 클래스 포함을 통해 구성
-        // for(int i = 0; i < genomList.Count; i++)
-        // {
-        //     genomList[i] = (Random.value > 0.5f);
-        // }
-        genom.InitGenom(8);
+        this.originPos = this.transform.position;
     }
     
     void Update()
     {
+        if(!canMove)    return;
+
         if (!isMoving)
         {
             Moving();
@@ -37,8 +37,6 @@ public class Car_Moving : MonoBehaviour
 
     public void Moving()
     {
-        if(TempStatic.instance.nowGwnerating)   return;
-
         isMoving = true;
         StartCoroutine(MoveCoroutine());
     }
@@ -64,5 +62,16 @@ public class Car_Moving : MonoBehaviour
             }
         }
         isMoving = false;
+    }
+
+    private void SetMovingState(bool canMove)
+    {
+        this.canMove = canMove;
+        if(!canMove)
+        {
+            // todo : should reposition object
+            this.transform.position = originPos;
+            this.transform.rotation = Quaternion.identity;
+        }
     }
 }
