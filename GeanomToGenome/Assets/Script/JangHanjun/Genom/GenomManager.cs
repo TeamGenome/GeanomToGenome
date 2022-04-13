@@ -24,13 +24,14 @@ public class GenomManager : MonoBehaviour
     [SerializeField] private int genomLength;
     [SerializeField] private float distanceBetweenObjects;
     [SerializeField] private List<Genom> subjects = new List<Genom>();
-    private List<List<bool>> dominantGenoms = new List<List<bool>>();
+    private List<List<bool>> dominantGenoms = new List<List<bool>>(4);
+    private List<bool> newGeneration = new List<bool>();
 
     void Start()
     {
+        newGeneration.Capacity = genomLength;
+        
         MakeGenoms();
-        List<bool> newGeneration = new List<bool>();
-        Debug.Log(newGeneration.Count);
     }
 
     private void MakeGenoms()
@@ -68,6 +69,9 @@ public class GenomManager : MonoBehaviour
 
         if(dominantGenoms.Count == 4)
         {
+            for(int i = 0; i < genomLength; i++){
+                Debug.Log(dominantGenoms[0][i]);
+            }
             Crossover();
         }
     }
@@ -88,7 +92,9 @@ public class GenomManager : MonoBehaviour
         for(int i = 4; i < 64; i++)
         {
             Debug.Log("replace : " + subjects[i].name);
-            subjects[i].ReplaceGenom(GenerateNewGenom());
+            //! TODO : Here have Error
+            // GenerateNewGenom();
+            subjects[i].ReplaceGenom(newGeneration);
         }
 
         // clear dominant list
@@ -98,29 +104,25 @@ public class GenomManager : MonoBehaviour
 
     private List<bool> GenerateNewGenom()
     {
-        List<bool> newGeneration = new List<bool>();
-
         // select parent
         int father = Random.Range(0, 4);
         int mother = Random.Range(0, 4);
-        Debug.Log(dominantGenoms.Count);
         for(int i = 0; i < genomLength; i++)
         {
             // random genom
             if(Random.value > 0.5f)
             {
-                Debug.Log(father + ", " + i);
-                newGeneration.Add(dominantGenoms[1][i]);
+                newGeneration[i] = dominantGenoms[father][i];
                 continue;
             }
             else
             {
-                Debug.Log(mother + ", " + i);
-                newGeneration.Add(dominantGenoms[1][i]);
+                newGeneration[i] = dominantGenoms[mother][i];
                 continue;
             }
         }
 
+        Debug.Log(newGeneration.Count);
         return newGeneration;
     }
 }
