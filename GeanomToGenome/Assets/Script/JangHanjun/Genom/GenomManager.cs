@@ -31,6 +31,7 @@ public class GenomManager : MonoBehaviour
 
     void Start()
     {
+        FindObjectOfType<GenomSelection>().inputGenomEvent += Selection;
         MakeGenoms();
         
         crossoverEvent?.Invoke(true);
@@ -64,6 +65,19 @@ public class GenomManager : MonoBehaviour
         }
     }
 
+    public void Selection(int genomIndex)
+    {
+        if(genomIndex < 0 || genomIndex >= subjects.Count)
+            return;
+            
+        dominantGenoms.Add(subjects[genomIndex-1].GenomList);
+
+        if(dominantGenoms.Count == 4)
+        {
+            Crossover();
+        }
+    }
+
     public void Selection(List<bool> inputFour)
     {
         dominantGenoms.Add(inputFour);
@@ -78,7 +92,6 @@ public class GenomManager : MonoBehaviour
     {   
         crossoverEvent?.Invoke(false);
         Debug.Log("다음 세대의 64개 유전자 생성");
-        TempStatic.instance.nowGwnerating = true;
 
         // deliver dominant 4 Genoms to next Generation
         for(int i = 0; i < 4; i++)
@@ -97,7 +110,7 @@ public class GenomManager : MonoBehaviour
         // clear dominant list
         dominantGenoms.Clear();
         Debug.Log("교배 끝");
-        // crossoverEvent?.Invoke(true);
+        crossoverEvent?.Invoke(true);
         generation++;
     }
 
