@@ -20,13 +20,15 @@ using System;
 public class GenomManager : MonoBehaviour
 {
     public event Action<bool> crossoverEvent;
+    public event Action<int, List<bool>> generationUpdateEvent;
     [SerializeField] private GameObject GenomPrefab;
     [SerializeField] private GameObject TrackTest;
     [SerializeField] private int genomLength;
     [SerializeField] private float distanceBetweenObjects;
-    public int generation;
+    private int generation;
     [SerializeField] private List<Genom> subjects = new List<Genom>();
     private List<List<bool>> dominantGenoms = new List<List<bool>>(4);
+    [SerializeField] private List<int> dominantIndex = new List<int>(4);
     [SerializeField] private List<bool> newGeneration = new List<bool>();
 
     void Start()
@@ -69,7 +71,14 @@ public class GenomManager : MonoBehaviour
     {
         if(genomIndex < 0 || genomIndex >= subjects.Count)
             return;
+
+        if(dominantIndex.Contains(genomIndex))  
+        {
+            Debug.Log("duplicated!");
+            return;
+        }
             
+        dominantIndex.Add(genomIndex);   
         dominantGenoms.Add(subjects[genomIndex-1].GenomList);
 
         if(dominantGenoms.Count == 4)
@@ -107,11 +116,15 @@ public class GenomManager : MonoBehaviour
             subjects[i].ReplaceGenom(newGeneration);
         }
 
-        // clear dominant list
-        dominantGenoms.Clear();
+
         Debug.Log("교배 끝");
         crossoverEvent?.Invoke(true);
         generation++;
+        generationUpdateEvent?.Invoke(generation, dominantGenoms[0]);
+
+        // clear dominant list
+        dominantGenoms.Clear();
+        dominantIndex.Clear();
     }
 
     private void GenerateNewGenom()
