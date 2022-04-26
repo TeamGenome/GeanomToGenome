@@ -4,27 +4,31 @@ using UnityEngine;
 
 public class Car_Moving : MonoBehaviour
 {
-    public List<bool> genomList = new List<bool>();
+    private Genom genom;
+    // public List<bool> genomList = new List<bool>();
     public Rigidbody carRB;
-
     public float moveSpeed;
     public bool isMoving;
+    [SerializeField] private bool canMove;
+    [SerializeField] private Vector3 originPos;
 
     private void Awake()
     {
         carRB = this.GetComponent<Rigidbody>();
+        genom = this.GetComponent<Genom>();
+        
+        FindObjectOfType<GenomManager>().crossoverEvent += SetMovingState;
     }
 
     private void Start()
     {
-        for(int i = 0; i < genomList.Count; i++)
-        {
-            genomList[i] = (Random.value > 0.5f);
-        }
+        this.originPos = this.transform.position;
     }
-    // Update is called once per frame
+    
     void Update()
     {
+        if(!canMove)    return;
+
         if (!isMoving)
         {
             Moving();
@@ -39,24 +43,35 @@ public class Car_Moving : MonoBehaviour
 
     public IEnumerator MoveCoroutine()
     {
-        foreach(var genom in genomList)
+        for(int i = 0; i < genom.GenomList.Count; i++)
         {
-            if (genom)
+            if (genom.GenomList[i])
             {
                 carRB.AddRelativeForce(Vector3.forward * moveSpeed);
                 yield return new WaitForSeconds(0.5f);
             }
             else
             {
-                for(int i = 1; i <= 90; i++)
+                for(int j = 1; j <= 90; j++)
                 {
                     carRB.transform.Rotate(0, 1, 0);
                     yield return new WaitForSeconds(0.005f);
                 }
-                carRB.transform.rotation = Quaternion.Euler(0, Mathf.Round(carRB.transform.rotation.eulerAngles.y), 0); // ¹Ý¿Ã¸²À¸·Î Á¤È®È÷ 90µµ °¢µµ·Î º¯°æ
+                carRB.transform.rotation = Quaternion.Euler(0, Mathf.Round(carRB.transform.rotation.eulerAngles.y), 0); // ï¿½Ý¿Ã¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È®ï¿½ï¿½ 90ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 yield return new WaitForSeconds(0.01f);
             }
         }
         isMoving = false;
+    }
+
+    private void SetMovingState(bool canMove)
+    {
+        this.canMove = canMove;
+        if(!canMove)
+        {
+            // todo : should reposition object
+            this.transform.position = originPos;
+            this.transform.rotation = Quaternion.identity;
+        }
     }
 }

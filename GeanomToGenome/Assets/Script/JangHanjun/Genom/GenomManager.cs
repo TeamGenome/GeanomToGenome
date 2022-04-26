@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 /*
 유전 알고리즘에서 각 연산들을 진행해 주는 클래스입니다.
 
@@ -19,19 +19,30 @@ using UnityEngine;
 */
 public class GenomManager : MonoBehaviour
 {
-    public GameObject GenomPrefab;
-    public int genomLength;
-    public float distanceBetweenObjects;
-    List<Genom> subjects = new List<Genom>();
-    List<List<bool>> dominantGenoms = new List<List<bool>>();
+    public event Action<bool> crossoverEvent;
+    public event Action<int, List<bool>> generationUpdateEvent;
+    [SerializeField] private GameObject GenomPrefab;
+    [SerializeField] private GameObject TrackTest;
+    [SerializeField] private int genomLength;
+    [SerializeField] private float distanceBetweenObjects;
+    private int generation;
+    [SerializeField] private List<Genom> subjects = new List<Genom>();
+    private List<List<bool>> dominantGenoms = new List<List<bool>>(4);
+    [SerializeField] private List<int> dominantIndex = new List<int>(4);
+    [SerializeField] private List<bool> newGeneration = new List<bool>();
 
     void Start()
     {
+        FindObjectOfType<GenomSelection>().inputGenomEvent += Selection;
         MakeGenoms();
+        
+        crossoverEvent?.Invoke(true);
     }
 
     private void MakeGenoms()
     {
+        Debug.Log("Initialize first 64 Genoms");
+
         Vector3 position = new Vector3(0, 0, 0);
 
         for(int xPos = 0; xPos < 8; xPos++)
@@ -39,52 +50,106 @@ public class GenomManager : MonoBehaviour
             position.x = xPos * distanceBetweenObjects;
             for(int zPos = 0; zPos < 8; zPos++)
             {
+                // instantiate track
+                Instantiate(TrackTest, position, Quaternion.identity);
+
+                // instantiate object which have genom
                 subjects.Add(Instantiate(GenomPrefab, position, Quaternion.identity).GetComponent<Genom>());
                 subjects[subjects.Count - 1].InitGenom(genomLength);
+                subjects[subjects.Count - 1].ReachToEndEvent += Selection;
+                subjects[subjects.Count - 1].name = "car" + (subjects.Count);
+
+
+                // edit instantiate position
                 position.z += distanceBetweenObjects;
             }
             position.z = 0;
         }
     }
 
-    public void Selection(List<List<bool>> inputFour)
+    public void Selection(int genomIndex)
     {
-        dominantGenoms = inputFour;
+        if(genomIndex < 0 || genomIndex >= subjects.Count)
+            return;
+
+        if(dominantIndex.Contains(genomIndex))  
+        {
+            Debug.Log("duplicated!");
+            return;
+        }
+            
+        dominantIndex.Add(genomIndex);   
+        dominantGenoms.Add(subjects[genomIndex-1].GenomList);
+
+        if(dominantGenoms.Count == 4)
+        {
+            Crossover();
+        }
+    }
+
+    public void Selection(List<bool> inputFour)
+    {
+        dominantGenoms.Add(inputFour);
+
+        if(dominantGenoms.Count == 4)
+        {
+            Crossover();
+        }
     }
 
     private void Crossover()
     {   
-        // 상위 4개의 객체는 살려 둡니다.
+        crossoverEvent?.Invoke(false);
+        Debug.Log("다음 세대의 64개 유전자 생성");
+
+        // deliver dominant 4 Genoms to next Generation
         for(int i = 0; i < 4; i++)
         {
             subjects[i].ReplaceGenom(dominantGenoms[i]);
         }
 
 
-        // 4개로 60개의 유전자를 바꿔야 합니다.
+        // make other genoms by crossover(+mutation)
         for(int i = 4; i < 64; i++)
         {
-            subjects[i].ReplaceGenom(newGenom());
+            GenerateNewGenom();
+            subjects[i].ReplaceGenom(newGeneration);
         }
+
+
+        Debug.Log("교배 끝");
+        crossoverEvent?.Invoke(true);
+        generation++;
+        generationUpdateEvent?.Invoke(generation, dominantGenoms[0]);
+
+        // clear dominant list
+        dominantGenoms.Clear();
+        dominantIndex.Clear();
     }
 
-    private List<bool> newGenom()
+    private void GenerateNewGenom()
     {
-        List<bool> newGeneration = new List<bool>(genomLength);
-
+        newGeneration.Clear();
         // select parent
-        int father = Random.Range(1, 5);
-        int mother = Random.Range(1, 5);
+        int father = UnityEngine.Random.Range(0, 4);
+        int mother = UnityEngine.Random.Range(0, 4);
+
 
         for(int i = 0; i < genomLength; i++)
         {
             // random genom
-            if(Random.value > 0.5f)
-                newGeneration[i] = dominantGenoms[father][i];
+            if(UnityEngine.Random.value > 0.5f)
+            {
+                newGeneration.Add(dominantGenoms[father][i]);
+            }
             else
-                newGeneration[i] = dominantGenoms[mother][i];
+            {
+                newGeneration.Add(dominantGenoms[mother][i]);
+            }
+            // mutation
+            if(UnityEngine.Random.value < 0.1f)
+                newGeneration[i] = !newGeneration[i];
         }
-
-        return newGeneration;
     }
+
 }
