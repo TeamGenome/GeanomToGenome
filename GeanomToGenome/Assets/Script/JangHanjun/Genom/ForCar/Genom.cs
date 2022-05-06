@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+
 public class Genom : MonoBehaviour
 {
     public event Action<List<bool>> ReachToEndEvent;
