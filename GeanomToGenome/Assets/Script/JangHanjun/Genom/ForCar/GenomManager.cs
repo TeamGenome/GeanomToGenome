@@ -79,7 +79,7 @@ public class GenomManager : MonoBehaviour
         }
             
         dominantIndex.Add(genomIndex);   
-        dominantGenoms.Add(subjects[genomIndex-1].GenomList);
+        dominantGenoms.Add(subjects[genomIndex].GenomList);
 
         if(dominantGenoms.Count == 4)
         {
