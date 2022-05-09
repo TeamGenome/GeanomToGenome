@@ -12,12 +12,18 @@ using System;
 public abstract class GenomManager<T> : MonoBehaviour
 {
     public event Action<int, List<T>> generationUpdateEvent;
+    [Header("유전자 설정")]
+    [Tooltip("이번 씬에서 설정할 유전자의 길이")]
     public int genomLength;
+    [Tooltip("현재 세대")]
     public int generation;
-    public List<Genom<T>> subjects = new List<Genom<T>>();
-    public List<List<T>> dominantGenoms = new List<List<T>>();
-    public List<int> dominantIndex = new List<int>();  
-    public List<T> newGenom = new List<T>();
+
+    [Tooltip("이번 씬의 자식들")]
+    [SerializeField] protected List<Genom<T>> subjects = new List<Genom<T>>();
+    protected List<List<T>> dominantGenoms = new List<List<T>>();
+    [SerializeField] protected List<int> dominantIndex = new List<int>();  
+    protected List<T> newGenom = new List<T>();
+
     public abstract void MakeGenoms();
 
 
