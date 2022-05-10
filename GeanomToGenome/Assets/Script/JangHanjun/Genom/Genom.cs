@@ -22,6 +22,12 @@ public abstract class Genom<T> : MonoBehaviour
     /// 유전자를 교체 합니다.
     ///</summary>
     ///<param name="newGenom">교체할 유전자</param>
-    public abstract void ReplaceGenom(List<T> newGenom);
+    public virtual void ReplaceGenom(List<T> newGenom)
+    {
+        for(int i = 0; i < newGenom.Count; i++)
+        {
+            genom[i] = newGenom[i];
+        }
+    }
 
 }

@@ -6,9 +6,16 @@ public class GenomManagerBool : GenomManager<bool>
 {
     private void Start()
     {
+        // TODO : 순서 복잡하게 되는것 수정
         // find all genoms and save to list
-        subjects.AddRange(FindObjectsOfType<Genom<bool>>());
+        // subjects.AddRange(FindObjectsOfType<Genom<bool>>());
+
+        FindObjectOfType<GenomSelection>().inputGenomEvent += Selection;
+
         MakeGenoms();
+
+        // TODO : 
+        hud = FindObjectOfType<InGameHud>();
 
         // generationUpdateEvent += FindObjectOfType<InGameUI<bool>>().SetGenerationUI;
     }
@@ -21,10 +28,16 @@ public class GenomManagerBool : GenomManager<bool>
         }
     }
 
-    [ContextMenu("test selection")]
-    public void test()
+    protected override void SetMostDominantGenomString(int genomIndex)
     {
-        base.Selection(0);
+        base.SetMostDominantGenomString(genomIndex);
+        
+        for(int i = 1; i <= genomLength; i++)
+        {
+            mostDominantGenom.Append(subjects[genomIndex].genom[i-1] ? 1 : 0);
+            if(i%4 == 0)
+                mostDominantGenom.Append(" | ");
+        }
     }
 
     public override void GenerateNewGenom()
@@ -57,8 +70,14 @@ public class GenomManagerBool : GenomManager<bool>
     {
         Debug.Log("generation update");
         generation++;
-        // generationUpdateEvent?.Invoke(generation, dominantGenoms[0]);
+
+        hud.SetGenerationUI(generation, mostDominantGenom);
+        Debug.Log(mostDominantGenom.ToString());
     }
 
-    
+    public override void FinalSelection(int genomIndex)
+    {
+        Debug.Log($"{genomIndex} selected");
+        // subjects[genomIndex].genom;
+    }
 }

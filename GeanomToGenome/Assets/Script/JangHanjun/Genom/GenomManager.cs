@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Text;
 
 ///<summary>
 /// 해당 씬의 게놈 관리자는 해당 클래스를 상속받아야 합니다.
@@ -17,12 +18,15 @@ public abstract class GenomManager<T> : MonoBehaviour
     public int genomLength;
     [Tooltip("현재 세대")]
     public int generation;
+    protected StringBuilder mostDominantGenom = new StringBuilder();
 
     [Tooltip("이번 씬의 자식들")]
     [SerializeField] protected List<Genom<T>> subjects = new List<Genom<T>>();
     protected List<List<T>> dominantGenoms = new List<List<T>>();
     [SerializeField] protected List<int> dominantIndex = new List<int>();  
     protected List<T> newGenom = new List<T>();
+
+    protected InGameHud hud;
 
     public abstract void MakeGenoms();
 
@@ -41,6 +45,12 @@ public abstract class GenomManager<T> : MonoBehaviour
             Debug.Log("duplicated!");
             return;
         }
+
+        // set most dominant genom for hud
+        if(dominantIndex.Count == 0)
+        {
+            SetMostDominantGenomString(genomIndex);
+        }
             
         dominantIndex.Add(genomIndex);   
         dominantGenoms.Add(subjects[genomIndex].genom);
@@ -52,6 +62,13 @@ public abstract class GenomManager<T> : MonoBehaviour
     }
 
 
+    ///<summary>
+    /// 인게임 HUD 설정으로 유전자 정보를 stringbuilder로 변경해야 합니다.
+    ///</summary>
+    protected virtual void SetMostDominantGenomString(int genomIndex)
+    {
+        mostDominantGenom.Clear();
+    }
 
     ///<summary>
     /// Selection에서 4개의 유전자를 저장하면 자동으로 불리는 함수입니다.
@@ -92,4 +109,9 @@ public abstract class GenomManager<T> : MonoBehaviour
     /// 세대가 업데이트 되면 불릴 함수입니다.
     ///</summary>
     public abstract void GenUpdate();
+
+    ///<summary>
+    /// 리그전에 사용할 최종 유전자를 확정하는 함수입니다.
+    ///</summary>
+    public abstract void FinalSelection(int genomIndex);
 }
