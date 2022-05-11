@@ -2,84 +2,58 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-/*
-유전 알고리즘에서 각 연산들을 진행해 주는 클래스입니다.
+using System.Text;
 
-1. 초기화 (init)
-    - 이 기능의 경우 각 Genom 클래스에서 하는 기능입니다.
-    - 이때 
-2. 선택 (selection)
-    - 상위 4개의 Genom을 받는 기능입니다.
-3. 교차 (crossover)
-    - 상위 4개의 Genom을 받은 뒤 
-4. 변이 (mutation)
-5. 교체 (replace)
-6. 반복
-
-*/
-public class GenomManager : MonoBehaviour
+///<summary>
+/// 해당 씬의 게놈 관리자는 해당 클래스를 상속받아야 합니다.
+///</summary>
+///<remarks>
+/// Monobehaviour을 가지고 있으며 유전자 자료형에 맞게 인자를 넘겨주면 됩니다.
+///</remarks>
+public abstract class GenomManager<T> : MonoBehaviour
 {
-    public event Action<bool> crossoverEvent;
-    public event Action<int, List<bool>> generationUpdateEvent;
-    [SerializeField] private GameObject GenomPrefab;
-    [SerializeField] private GameObject TrackTest;
-    [SerializeField] private int genomLength;
-    [SerializeField] private float distanceBetweenObjects;
-    private int generation;
-    [SerializeField] private List<Genom> subjects = new List<Genom>();
-    private List<List<bool>> dominantGenoms = new List<List<bool>>(4);
-    [SerializeField] private List<int> dominantIndex = new List<int>(4);
-    [SerializeField] private List<bool> newGeneration = new List<bool>();
+    public event Action<int, List<T>> generationUpdateEvent;
+    [Header("유전자 설정")]
+    [Tooltip("이번 씬에서 설정할 유전자의 길이")]
+    public int genomLength;
+    [Tooltip("현재 세대")]
+    public int generation;
+    protected StringBuilder mostDominantGenom = new StringBuilder();
 
-    void Start()
-    {
-        FindObjectOfType<GenomSelection>().inputGenomEvent += Selection;
-        MakeGenoms();
-        
-        crossoverEvent?.Invoke(true);
-    }
+    [Tooltip("이번 씬의 자식들")]
+    [SerializeField] protected List<Genom<T>> subjects = new List<Genom<T>>();
+    protected List<List<T>> dominantGenoms = new List<List<T>>();
+    [SerializeField] protected List<int> dominantIndex = new List<int>();  
+    protected List<T> newGenom = new List<T>();
 
-    private void MakeGenoms()
-    {
-        Debug.Log("Initialize first 64 Genoms");
+    protected InGameHud hud;
 
-        Vector3 position = new Vector3(0, 0, 0);
-
-        for(int xPos = 0; xPos < 8; xPos++)
-        {
-            position.x = xPos * distanceBetweenObjects;
-            for(int zPos = 0; zPos < 8; zPos++)
-            {
-                // instantiate track
-                Instantiate(TrackTest, position, Quaternion.identity);
-
-                // instantiate object which have genom
-                subjects.Add(Instantiate(GenomPrefab, position, Quaternion.identity).GetComponent<Genom>());
-                subjects[subjects.Count - 1].InitGenom(genomLength);
-                subjects[subjects.Count - 1].ReachToEndEvent += Selection;
-                subjects[subjects.Count - 1].name = "car" + (subjects.Count);
+    public abstract void MakeGenoms();
 
 
-                // edit instantiate position
-                position.z += distanceBetweenObjects;
-            }
-            position.z = 0;
-        }
-    }
-
-    public void Selection(int genomIndex)
+    ///<summary>
+    /// 사용자가 선택한 유전자의 인덱스를 받아오는 함수입니다.
+    ///</summary>
+    ///<param name="genomIndex">유전자 인덱스</param>
+    public virtual void Selection(int genomIndex)
     {
         if(genomIndex < 0 || genomIndex >= subjects.Count)
             return;
-
+        
         if(dominantIndex.Contains(genomIndex))  
         {
             Debug.Log("duplicated!");
             return;
         }
+
+        // set most dominant genom for hud
+        if(dominantIndex.Count == 0)
+        {
+            SetMostDominantGenomString(genomIndex);
+        }
             
         dominantIndex.Add(genomIndex);   
-        dominantGenoms.Add(subjects[genomIndex-1].GenomList);
+        dominantGenoms.Add(subjects[genomIndex].genom);
 
         if(dominantGenoms.Count == 4)
         {
@@ -87,19 +61,20 @@ public class GenomManager : MonoBehaviour
         }
     }
 
-    public void Selection(List<bool> inputFour)
+
+    ///<summary>
+    /// 인게임 HUD 설정으로 유전자 정보를 stringbuilder로 변경해야 합니다.
+    ///</summary>
+    protected virtual void SetMostDominantGenomString(int genomIndex)
     {
-        dominantGenoms.Add(inputFour);
-
-        if(dominantGenoms.Count == 4)
-        {
-            Crossover();
-        }
+        mostDominantGenom.Clear();
     }
 
-    private void Crossover()
-    {   
-        crossoverEvent?.Invoke(false);
+    ///<summary>
+    /// Selection에서 4개의 유전자를 저장하면 자동으로 불리는 함수입니다.
+    ///</summary>
+    public virtual void Crossover()
+    {
         Debug.Log("다음 세대의 64개 유전자 생성");
 
         // deliver dominant 4 Genoms to next Generation
@@ -110,46 +85,33 @@ public class GenomManager : MonoBehaviour
 
 
         // make other genoms by crossover(+mutation)
-        for(int i = 4; i < 64; i++)
+        for(int i = 4; i < subjects.Count; i++)
         {
             GenerateNewGenom();
-            subjects[i].ReplaceGenom(newGeneration);
+            subjects[i].ReplaceGenom(newGenom);
         }
 
-
-        Debug.Log("교배 끝");
-        crossoverEvent?.Invoke(true);
         generation++;
-        generationUpdateEvent?.Invoke(generation, dominantGenoms[0]);
+        GenUpdate();
 
         // clear dominant list
         dominantGenoms.Clear();
         dominantIndex.Clear();
     }
 
-    private void GenerateNewGenom()
-    {
-        newGeneration.Clear();
-        // select parent
-        int father = UnityEngine.Random.Range(0, 4);
-        int mother = UnityEngine.Random.Range(0, 4);
 
+    ///<summary>
+    /// Crossover 에서 유전자를 만드는데 사용할 함수입니다.
+    ///</summary>
+    public abstract void GenerateNewGenom();
 
-        for(int i = 0; i < genomLength; i++)
-        {
-            // random genom
-            if(UnityEngine.Random.value > 0.5f)
-            {
-                newGeneration.Add(dominantGenoms[father][i]);
-            }
-            else
-            {
-                newGeneration.Add(dominantGenoms[mother][i]);
-            }
-            // mutation
-            if(UnityEngine.Random.value < 0.1f)
-                newGeneration[i] = !newGeneration[i];
-        }
-    }
+    ///<summary>
+    /// 세대가 업데이트 되면 불릴 함수입니다.
+    ///</summary>
+    public abstract void GenUpdate();
 
+    ///<summary>
+    /// 리그전에 사용할 최종 유전자를 확정하는 함수입니다.
+    ///</summary>
+    public abstract void FinalSelection(int genomIndex);
 }
