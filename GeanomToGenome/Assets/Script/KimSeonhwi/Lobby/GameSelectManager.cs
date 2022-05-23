@@ -10,6 +10,7 @@ public class GameSelectManager : MonoBehaviour
     [SerializeField] private Text gameSelectText;
     [SerializeField] private List<GameValue> gameValues;
 
+
     public void InitialGameSelectPanel()
     {
         gameSelectText.text = gameValues[gameNumber].gameName;
