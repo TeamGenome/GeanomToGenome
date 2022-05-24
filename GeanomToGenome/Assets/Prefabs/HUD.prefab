@@ -328,7 +328,6 @@ GameObject:
   - component: {fileID: 6101907353892472725}
   - component: {fileID: 6101907353892472724}
   - component: {fileID: 6101907353892472715}
-  - component: {fileID: 6101907353892472726}
   m_Layer: 5
   m_Name: New Gen Input Field
   m_TagString: Untagged
@@ -449,8 +448,8 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6101907353892472726}
-        m_TargetAssemblyTypeName: GenomSelection, Assembly-CSharp
+      - m_Target: {fileID: 6101907354425354352}
+        m_TargetAssemblyTypeName: InGameHud, Assembly-CSharp
         m_MethodName: EndInputEvent
         m_Mode: 1
         m_Arguments:
@@ -472,18 +471,6 @@ MonoBehaviour:
   m_CaretWidth: 1
   m_ReadOnly: 0
   m_ShouldActivateOnSelect: 1
---- !u!114 &6101907353892472726
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6101907353892472713}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f3ae02b670b60a459fa324ed9f2adc2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &6101907354010715728
 GameObject:
   m_ObjectHideFlags: 0
@@ -681,6 +668,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   generationText: {fileID: 6101907354686773508}
   genomListText: {fileID: 6101907352986681483}
+  genomInputField: {fileID: 6101907353892472715}
+  finalGenomSelectField: {fileID: 4511986284274617030}
 --- !u!1 &6101907354686773498
 GameObject:
   m_ObjectHideFlags: 0

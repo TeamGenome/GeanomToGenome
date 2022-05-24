@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Text;
+using System;
 
 public class InGameHud : MonoBehaviour
 {
@@ -10,6 +11,13 @@ public class InGameHud : MonoBehaviour
     [SerializeField] protected Text genomListText;
     protected StringBuilder generation = new StringBuilder("Generation : 0");
     protected StringBuilder dominantGenom = new StringBuilder("Dominant Genom : 00000000");
+
+    // select input field
+    public event Action<int> inputGenomEvent;
+    [SerializeField] private InputField genomInputField;
+
+    public event Action<int> inputFinalGenomEvent;
+    [SerializeField] private InputField finalGenomSelectField;
 
 
 
@@ -32,4 +40,14 @@ public class InGameHud : MonoBehaviour
         generationText.text = generation.ToString();
         genomListText.text = dominantGenom.ToString();
     }
+
+    public void EndInputEvent()
+    {
+        int index;
+        if(int.TryParse(genomInputField.text, out index))
+        {
+            inputGenomEvent?.Invoke(index);
+        }
+    }
+
 }

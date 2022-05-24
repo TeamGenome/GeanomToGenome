@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using TMPro;
 public class Car_Moving : MonoBehaviour
 {
-    private Genom genom;
+    private GenomBool genom;
     // public List<bool> genomList = new List<bool>();
     public Rigidbody carRB;
     public float moveSpeed;
@@ -15,9 +15,9 @@ public class Car_Moving : MonoBehaviour
     private void Awake()
     {
         carRB = this.GetComponent<Rigidbody>();
-        genom = this.GetComponent<Genom>();
+        genom = this.GetComponent<GenomBool>();
         
-        FindObjectOfType<GenomManager>().crossoverEvent += SetMovingState;
+        FindObjectOfType<GenomManagerBool>().crossoverEvent += SetMovingState;
     }
 
     private void Start()
@@ -43,9 +43,9 @@ public class Car_Moving : MonoBehaviour
 
     public IEnumerator MoveCoroutine()
     {
-        for(int i = 0; i < genom.GenomList.Count; i++)
+        for(int i = 0; i < genom.genom.Count; i++)
         {
-            if (genom.GenomList[i])
+            if (genom.genom[i])
             {
                 carRB.AddRelativeForce(Vector3.forward * moveSpeed);
                 yield return new WaitForSeconds(0.5f);

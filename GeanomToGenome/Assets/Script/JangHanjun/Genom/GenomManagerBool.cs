@@ -1,30 +1,49 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using TMPro;
 public class GenomManagerBool : GenomManager<bool>
 {
+    [Header("생성할 프리팹")]
+    [SerializeField] private GameObject boolCarPrefab;
+    [SerializeField] private GameObject carTrack;
     private void Start()
     {
         // TODO : 순서 복잡하게 되는것 수정
         // find all genoms and save to list
         // subjects.AddRange(FindObjectsOfType<Genom<bool>>());
 
-        FindObjectOfType<GenomSelection>().inputGenomEvent += Selection;
+        base.InitScene();
 
         MakeGenoms();
-
-        // TODO : 
-        hud = FindObjectOfType<InGameHud>();
 
         // generationUpdateEvent += FindObjectOfType<InGameUI<bool>>().SetGenerationUI;
     }
 
     public override void MakeGenoms()
     {
-        for(int i = 0; i < subjects.Count; i++)
+        // generate position
+        Vector3 position = new Vector3(0, 0, 0);
+
+        for(int xPos = 0; xPos < 8; xPos++)
         {
-            subjects[i].InitGenom(genomLength);
+            position.x = xPos * 50f;
+            for(int zPos = 0; zPos < 8; zPos++)
+            {
+                // instantiate track
+                // Instantiate(boolCarPrefab, position, Quaternion.identity);
+
+                // instantiate object which have genom
+                subjects.Add(Instantiate(boolCarPrefab, position, Quaternion.identity).GetComponentInChildren<GenomBool>());
+                subjects[subjects.Count - 1].transform.parent.GetComponentInChildren<TextMeshPro>().text = (subjects.Count - 1).ToString();
+                subjects[subjects.Count - 1].InitGenom(genomLength);
+                subjects[subjects.Count - 1].transform.parent.name = "car" + (subjects.Count-1);
+
+
+                // edit instantiate position
+                position.z += 50f;
+            }
+            position.z = 0;
         }
     }
 
@@ -47,7 +66,6 @@ public class GenomManagerBool : GenomManager<bool>
         // select parent
         int father = UnityEngine.Random.Range(0, 4);
         int mother = UnityEngine.Random.Range(0, 4);
-
 
         for(int i = 0; i < genomLength; i++)
         {

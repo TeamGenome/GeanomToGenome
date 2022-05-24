@@ -12,6 +12,7 @@ using System.Text;
 ///</remarks>
 public abstract class GenomManager<T> : MonoBehaviour
 {
+    public event Action<bool> crossoverEvent;
     public event Action<int, List<T>> generationUpdateEvent;
     [Header("유전자 설정")]
     [Tooltip("이번 씬에서 설정할 유전자의 길이")]
@@ -29,6 +30,17 @@ public abstract class GenomManager<T> : MonoBehaviour
     protected InGameHud hud;
 
     public abstract void MakeGenoms();
+
+
+    ///<summary>
+    /// 유전자 매니저들이 공통으로 가지는 함수입니다.
+    ///</summary>
+    protected void InitScene()
+    {
+        hud = FindObjectOfType<InGameHud>();
+        hud.inputGenomEvent += Selection;
+        hud.inputFinalGenomEvent += FinalSelection;
+    }
 
 
     ///<summary>
@@ -75,6 +87,7 @@ public abstract class GenomManager<T> : MonoBehaviour
     ///</summary>
     public virtual void Crossover()
     {
+        crossoverEvent?.Invoke(false);
         Debug.Log("다음 세대의 64개 유전자 생성");
 
         // deliver dominant 4 Genoms to next Generation
@@ -91,6 +104,7 @@ public abstract class GenomManager<T> : MonoBehaviour
             subjects[i].ReplaceGenom(newGenom);
         }
 
+        crossoverEvent?.Invoke(true);
         generation++;
         GenUpdate();
 
