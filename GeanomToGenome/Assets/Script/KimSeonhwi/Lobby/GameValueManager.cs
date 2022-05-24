@@ -8,6 +8,7 @@ public class GameValueManager : MonoBehaviour
 {
     public static GameValueManager instance;
     public int gameNumber;
+    public int gameMode;
     public List<GameValue> gameValues;
 
     private void Awake()

@@ -31,4 +31,9 @@ public class GameSelectManager : MonoBehaviour
         if (gvm.gameValues[gvm.gameNumber].leagueSceneName != string.Empty)
             LoadingSceneManager.LoadScene(gvm.gameValues[gvm.gameNumber].leagueSceneName);
     }
+    
+    public void GameStart() // gvm.gameMode가 0이라면 훈련, 1이라면 대회 참가
+    {
+
+    }
 }
