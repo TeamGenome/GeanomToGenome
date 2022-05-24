@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// 로비에 있는 버튼상호작용을 관리합니다.
+/// </summary>
 public class LobbyButtonManager : MonoBehaviour
 {
 
@@ -19,7 +21,7 @@ public class LobbyButtonManager : MonoBehaviour
 
     public void GameSelect(int _gameNumber)
     {
-        GameSelectManager.gameNumber = _gameNumber;
+        GameValueManager.instance.gameNumber = _gameNumber;
     }
     public void GameQuit()
     {

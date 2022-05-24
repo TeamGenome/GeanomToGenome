@@ -2,29 +2,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+/// <summary>
+/// 선택된 게임을 시작하도록 합니다.
+/// </summary>
 public class GameSelectManager : MonoBehaviour
 {
-    public static int gameNumber;
-
     [SerializeField] private Text gameSelectText;
-    [SerializeField] private List<GameValue> gameValues;
+    private GameValueManager gvm;
 
+    private void Start()
+    {
+        gvm = GameValueManager.instance;
+    }
 
     public void InitialGameSelectPanel()
     {
-        gameSelectText.text = gameValues[gameNumber].gameName;
+        gameSelectText.text = gvm.gameValues[gvm.gameNumber].gameName;
     }
 
     public void TrainingGameLoad()
     {
-        if (gameValues[gameNumber].trainingSceneName != string.Empty)
-            LoadingSceneManager.LoadScene(gameValues[gameNumber].trainingSceneName);
+        if (gvm.gameValues[gvm.gameNumber].trainingSceneName != string.Empty)
+            LoadingSceneManager.LoadScene(gvm.gameValues[gvm.gameNumber].trainingSceneName);
     }
 
     public void LeagueGameLoad()
     {
-        if (gameValues[gameNumber].leagueSceneName != string.Empty)
-            LoadingSceneManager.LoadScene(gameValues[gameNumber].leagueSceneName);
+        if (gvm.gameValues[gvm.gameNumber].leagueSceneName != string.Empty)
+            LoadingSceneManager.LoadScene(gvm.gameValues[gvm.gameNumber].leagueSceneName);
     }
 }

@@ -15,7 +15,7 @@ public class ShopManager : MonoBehaviour
     }
     void InitalizeShop()
     {
-        UnityEngine.Random.InitState(DateTime.Now.Day);
+        UnityEngine.Random.InitState(DateTime.Now.Day); // 하루에 한 번씩 매물이 바뀜
         saleGenomBool.InitGenom(carGameGenomSize);
         saleGenomInt.InitGenom(dragoonGameGenomSize);
         UnityEngine.Random.InitState(DateTime.Now.Millisecond);
@@ -24,6 +24,5 @@ public class ShopManager : MonoBehaviour
     {
         GenomList<bool> gl = new GenomList<bool>(saleGenomBool.genom);
         UserDataManager.userData.carGenoms.Add(gl);
-
     }
 }
