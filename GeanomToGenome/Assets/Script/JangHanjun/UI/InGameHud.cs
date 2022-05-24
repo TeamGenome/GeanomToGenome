@@ -16,6 +16,7 @@ public class InGameHud : MonoBehaviour
     public event Action<int> inputGenomEvent;
     [SerializeField] private InputField genomInputField;
 
+    // final selection field
     public event Action<int> inputFinalGenomEvent;
     [SerializeField] private InputField finalGenomSelectField;
 
@@ -49,5 +50,16 @@ public class InGameHud : MonoBehaviour
             inputGenomEvent?.Invoke(index);
         }
     }
+
+    public void EndFinalGenomInputEvent()
+    {
+        Debug.Log(finalGenomSelectField.text);
+        int index;
+        if(int.TryParse(finalGenomSelectField.text, out index))
+        {
+            inputFinalGenomEvent?.Invoke(index);
+        }
+    }
+
 
 }

@@ -17,6 +17,8 @@ public class GenomManagerBool : GenomManager<bool>
 
         MakeGenoms();
 
+        CrossoverEvent(true);
+
         // generationUpdateEvent += FindObjectOfType<InGameUI<bool>>().SetGenerationUI;
     }
 

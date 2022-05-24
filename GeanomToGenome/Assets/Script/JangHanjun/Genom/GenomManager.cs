@@ -128,4 +128,10 @@ public abstract class GenomManager<T> : MonoBehaviour
     /// 리그전에 사용할 최종 유전자를 확정하는 함수입니다.
     ///</summary>
     public abstract void FinalSelection(int genomIndex);
+
+
+    protected void CrossoverEvent(bool input)
+    {
+        crossoverEvent?.Invoke(true);
+    }
 }
