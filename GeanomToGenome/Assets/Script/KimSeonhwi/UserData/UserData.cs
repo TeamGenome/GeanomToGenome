@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class UserData : MonoBehaviour
+public class UserData
 {
     public UserData() 
     { 
         Debug.Log("Create UserData");
-        genoms = new List<string>();
+        carGenoms = new List<GenomList<bool>>();
+        dragoonGenoms = new List<GenomList<int>>();
         money = 0;
     }
-    public List<string> genoms;
+    public List<GenomList<bool>> carGenoms;
+    public List<GenomList<int>> dragoonGenoms;
     public int money;
 }

@@ -36,6 +36,7 @@ public class UserDataManager : MonoBehaviour
     public static void SaveUserData()
     {
         string jsonData = JsonUtility.ToJson(userData);
+        Debug.Log("Save Data is " + jsonData);
         FileStream fs = new FileStream(string.Format("{0}{1}", Application.persistentDataPath, DATA_FILE_NAME), FileMode.Create);
         byte[] data = Encoding.UTF8.GetBytes(jsonData);
         fs.Write(data, 0, data.Length);
