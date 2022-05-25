@@ -98,6 +98,9 @@ public class GenomManagerBool : GenomManager<bool>
     public override void FinalSelection(int genomIndex)
     {
         Debug.Log($"{genomIndex} selected");
-        // subjects[genomIndex].genom;
+        UserDataManager.selectedGenomBool = (GenomBool)subjects[genomIndex];
+        GenomList<bool> savedGenom = new GenomList<bool>(subjects[genomIndex].genom);
+        UserDataManager.userData.carGenoms.Add(savedGenom);
+        UserDataManager.SaveUserData();
     }
 }

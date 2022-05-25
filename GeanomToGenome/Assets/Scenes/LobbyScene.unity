@@ -1464,9 +1464,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameNumber: 0
+  gameMode: 0
   gameValues:
   - gameName: "\uC790\uB3D9\uCC28 \uC6C0\uC9C1\uC774\uAE30"
-    trainingSceneName: genomtest
+    trainingSceneName: genericTest
     leagueSceneName: 
   - gameName: "\uB4DC\uB77C\uAD70 \uAC8C\uC784"
     trainingSceneName: 
@@ -7066,7 +7067,7 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 772686522}
         m_TargetAssemblyTypeName: GameSelectManager, Assembly-CSharp
-        m_MethodName: InitialGameSelectPanel
+        m_MethodName: TrainingGameLoad
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
