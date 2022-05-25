@@ -13,6 +13,7 @@ public class UserDataManager : MonoBehaviour
 
     private void Start()
     {
+        selectedGenomBool = new GenomBool();
         LoadUserData();
     }
     public static void LoadUserData()
