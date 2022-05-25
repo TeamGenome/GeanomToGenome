@@ -29,4 +29,5 @@ public class GameValueManager : MonoBehaviour
 	{
         genomNumber = int.Parse(inputField.text);
 	}
+
 }
