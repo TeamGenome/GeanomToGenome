@@ -8,11 +8,16 @@ using UnityEngine.UI;
 public class GameSelectManager : MonoBehaviour
 {
     [SerializeField] private Text gameSelectText;
+    [SerializeField] private List<GameObject> genoms;
+    [SerializeField] private Text genomData;
+    private GameObject selectedGenom;
+    private GameObject checkMark;
     private GameValueManager gvm;
-
+    
     private void Start()
     {
         gvm = GameValueManager.instance;
+        selectedGenom = null;
     }
 
     public void InitialGameSelectPanel()
@@ -62,5 +67,70 @@ public class GameSelectManager : MonoBehaviour
             default:
                 return;
 		}
+    }
+
+    // 유전자 리스트 초기화
+    public void GenomsListInitial()
+    {
+        switch (gvm.gameNumber)
+        {
+            case 0:
+                for (int i = 0; i < UserDataManager.userData.carGenoms.Count; i++)
+                {
+                    genoms[i].SetActive(true);
+                }
+                break;
+            case 1:
+                for (int i = 0; i < UserDataManager.userData.dragoonGenoms.Count; i++)
+                {
+                    genoms[i].SetActive(true);
+                }
+                break;
+            default:
+                return;
+        }
+    }
+
+    // 유전자 리스트를 닫음
+    public void CloseGenomList()
+    {
+        foreach (var genom in genoms)
+        {
+            genom.SetActive(false);
+        }
+    }
+    
+    // 게임 시작 전 유전자를 선택
+    public void GenomSelect(int _val)
+    {
+        gvm.genomNumber = _val;
+
+        if (selectedGenom != null)
+        {
+            checkMark = selectedGenom.transform.GetChild(0).gameObject;
+            checkMark.SetActive(false);
+        }
+        selectedGenom = genoms[_val];
+        checkMark = selectedGenom.transform.GetChild(0).gameObject;
+        checkMark.SetActive(true);
+
+        genomData.text = "";
+        switch (gvm.gameNumber)
+        {
+            case 0:
+                foreach(var genom in UserDataManager.userData.carGenoms[_val].gl)
+                {
+                    genomData.text += genom + " ";
+                }
+                break;
+            case 1:
+                foreach (var genom in UserDataManager.userData.dragoonGenoms[_val].gl)
+                {
+                    genomData.text += genom + " ";
+                }
+                break;
+            default:
+                return;
+        }
     }
 }

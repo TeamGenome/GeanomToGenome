@@ -2,15 +2,20 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ShopManager : MonoBehaviour
 {
     private const int carGameGenomSize = 9;
     private const int dragoonGameGenomSize = 9;
+    [SerializeField]
+    private Text genomData;
+    private GameValueManager gvm;
     public GenomBool saleGenomBool;
     public GenomInt saleGenomInt;
     private void Start()
     {
+        gvm = GameValueManager.instance;
         InitalizeShop();
     }
     void InitalizeShop()
@@ -20,9 +25,45 @@ public class ShopManager : MonoBehaviour
         saleGenomInt.InitGenom(dragoonGameGenomSize);
         UnityEngine.Random.InitState(DateTime.Now.Millisecond);
     }
+
+    public void OpenShop()
+    {
+        genomData.text = "";
+        switch (gvm.gameNumber)
+        {
+            case 0:
+                foreach(var genom in saleGenomBool.genom)
+                {
+                    genomData.text += genom + " ";
+                }
+                break;
+            case 1:
+                //foreach (var genom in saleGenomInt.genom)
+                //{
+                //    genomData.text += genom;
+                //}
+                break;
+            default:
+                break;
+        }
+    }
+
     public void BuyNewGenom()
     {
-        GenomList<bool> gl = new GenomList<bool>(saleGenomBool.genom);
-        UserDataManager.userData.carGenoms.Add(gl);
+        switch(gvm.gameNumber)
+        {
+            case 0:
+                GenomList<bool> gl = new GenomList<bool>(saleGenomBool.genom);
+                UserDataManager.userData.carGenoms.Add(gl);
+                UserDataManager.SaveUserData();
+                break;
+            case 1:
+                //GenomList<int> gl = new GenomList<int>(saleGenomint.genom);
+                //UserDataManager.userData.dragoonGenoms.Add(gl);
+                //UserDataManager.userData.dragoonGenomBuyTime = now;
+                break;
+            default:
+                break;
+        }
     }
 }
