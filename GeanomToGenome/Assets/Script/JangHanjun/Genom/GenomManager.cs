@@ -37,6 +37,7 @@ public abstract class GenomManager<T> : MonoBehaviour
     ///</summary>
     protected void InitScene()
     {
+        // connect with hud
         hud = FindObjectOfType<InGameHud>();
         hud.inputGenomEvent += Selection;
         hud.inputFinalGenomEvent += FinalSelection;
@@ -62,6 +63,7 @@ public abstract class GenomManager<T> : MonoBehaviour
         if(dominantIndex.Count == 0)
         {
             SetMostDominantGenomString(genomIndex);
+            hud.SetGenerationUI(generation, mostDominantGenom);
         }
             
         dominantIndex.Add(genomIndex);   
@@ -104,13 +106,13 @@ public abstract class GenomManager<T> : MonoBehaviour
             subjects[i].ReplaceGenom(newGenom);
         }
 
-        crossoverEvent?.Invoke(true);
-        generation++;
         GenUpdate();
 
         // clear dominant list
         dominantGenoms.Clear();
         dominantIndex.Clear();
+
+        crossoverEvent?.Invoke(true);
     }
 
 

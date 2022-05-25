@@ -9,17 +9,11 @@ public class GenomManagerBool : GenomManager<bool>
     [SerializeField] private GameObject carTrack;
     private void Start()
     {
-        // TODO : 순서 복잡하게 되는것 수정
-        // find all genoms and save to list
-        // subjects.AddRange(FindObjectsOfType<Genom<bool>>());
-
         base.InitScene();
 
         MakeGenoms();
 
         CrossoverEvent(true);
-
-        // generationUpdateEvent += FindObjectOfType<InGameUI<bool>>().SetGenerationUI;
     }
 
     public override void MakeGenoms()
@@ -32,10 +26,7 @@ public class GenomManagerBool : GenomManager<bool>
             position.x = xPos * 50f;
             for(int zPos = 0; zPos < 8; zPos++)
             {
-                // instantiate track
-                // Instantiate(boolCarPrefab, position, Quaternion.identity);
-
-                // instantiate object which have genom
+                // instantiate object which have genom car and track
                 subjects.Add(Instantiate(boolCarPrefab, position, Quaternion.identity).GetComponentInChildren<GenomBool>());
                 subjects[subjects.Count - 1].transform.parent.GetComponentInChildren<TextMeshPro>().text = (subjects.Count - 1).ToString();
                 subjects[subjects.Count - 1].InitGenom(genomLength);
@@ -47,6 +38,7 @@ public class GenomManagerBool : GenomManager<bool>
             }
             position.z = 0;
         }
+
     }
 
     protected override void SetMostDominantGenomString(int genomIndex)
@@ -93,7 +85,7 @@ public class GenomManagerBool : GenomManager<bool>
 
         hud.SetGenerationUI(generation, mostDominantGenom);
         Debug.Log(mostDominantGenom.ToString());
-    }
+    }   
 
     public override void FinalSelection(int genomIndex)
     {
