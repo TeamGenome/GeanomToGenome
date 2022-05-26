@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using System.Text;
 using System;
 
@@ -12,13 +13,19 @@ public class InGameHud : MonoBehaviour
     protected StringBuilder generation = new StringBuilder("Generation : 0");
     protected StringBuilder dominantGenom = new StringBuilder("Dominant Genom : 00000000");
 
-    // select input field
+
+    // [Header("input field")]
     public event Action<int> inputGenomEvent;
     [SerializeField] private InputField genomInputField;
 
-    // final selection field
+    // [Header("final selection")]
     public event Action<int> inputFinalGenomEvent;
     [SerializeField] private InputField finalGenomSelectField;
+
+    // [Header("continue panel")]
+    [SerializeField] private GameObject selectContinuePanel;
+
+
 
 
 
@@ -59,7 +66,25 @@ public class InGameHud : MonoBehaviour
         {
             inputFinalGenomEvent?.Invoke(index);
         }
+
+        OpenContinuePanel();
     }
 
+    public void OpenContinuePanel()
+    {
+        Time.timeScale = 0f;
+        selectContinuePanel.SetActive(true);
+    }
+
+    public void ContinueTraining()
+    {
+        Time.timeScale = 1f;
+        selectContinuePanel.SetActive(false);
+    }
+
+    public void StopTraining()
+    {
+        SceneManager.LoadScene(0);
+    }   
 
 }
