@@ -13,7 +13,7 @@ public class UserData
         dragoonGenoms = new List<GenomList<int>>();
         //carGenomBuyTime = DateTime.MinValue;
         //dragoonGenomBuyTime = DateTime.MinValue;
-        money = 0;
+        money = 500;
     }
     public List<GenomList<bool>> carGenoms;
     public List<GenomList<int>> dragoonGenoms;

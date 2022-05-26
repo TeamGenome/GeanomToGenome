@@ -10,6 +10,8 @@ public class ShopManager : MonoBehaviour
     private const int dragoonGameGenomSize = 9;
     [SerializeField]
     private Text genomData;
+    [SerializeField]
+    private Text money;
     private GameValueManager gvm;
     public GenomBool saleGenomBool;
     public GenomInt saleGenomInt;
@@ -29,6 +31,7 @@ public class ShopManager : MonoBehaviour
     public void OpenShop()
     {
         genomData.text = "";
+        money.text = UserDataManager.userData.money.ToString() + " ¿ø";
         switch (gvm.gameNumber)
         {
             case 0:
