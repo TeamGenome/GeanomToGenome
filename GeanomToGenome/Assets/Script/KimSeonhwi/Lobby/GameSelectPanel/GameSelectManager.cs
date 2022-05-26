@@ -10,6 +10,7 @@ public class GameSelectManager : MonoBehaviour
     [SerializeField] private Text gameSelectText;
     [SerializeField] private List<GameObject> genoms;
     [SerializeField] private Text genomData;
+    [SerializeField] private Button startButton;
     private GameObject selectedGenom;
     private GameObject checkMark;
     private GameValueManager gvm;
@@ -72,15 +73,20 @@ public class GameSelectManager : MonoBehaviour
     // 유전자 리스트 초기화
     public void GenomsListInitial()
     {
+        startButton.interactable = true;
         switch (gvm.gameNumber)
         {
             case 0:
+                if (UserDataManager.userData.carGenoms.Count == 0)
+                    startButton.interactable = false;
                 for (int i = 0; i < UserDataManager.userData.carGenoms.Count; i++)
                 {
                     genoms[i].SetActive(true);
                 }
                 break;
             case 1:
+                if (UserDataManager.userData.dragoonGenoms.Count == 0)
+                    startButton.interactable = false;
                 for (int i = 0; i < UserDataManager.userData.dragoonGenoms.Count; i++)
                 {
                     genoms[i].SetActive(true);
