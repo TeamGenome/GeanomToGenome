@@ -23,6 +23,11 @@ public class LobbyButtonManager : MonoBehaviour
     {
         GameValueManager.instance.gameNumber = _gameNumber;
     }
+
+    public void GameModeSelect(int _gameMode)
+	{
+        GameValueManager.instance.gameMode = _gameMode;
+	}
     public void GameQuit()
     {
 #if UNITY_EDITOR
