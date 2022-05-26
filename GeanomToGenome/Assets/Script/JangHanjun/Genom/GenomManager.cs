@@ -41,6 +41,8 @@ public abstract class GenomManager<T> : MonoBehaviour
         hud = FindObjectOfType<InGameHud>();
         hud.inputGenomEvent += Selection;
         hud.inputFinalGenomEvent += FinalSelection;
+
+        Time.timeScale = 1f;
     }
 
 
